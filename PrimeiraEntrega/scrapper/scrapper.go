@@ -1,67 +1,74 @@
 package main
 
 import (
-    "fmt"	
     "sync"
     "github.com/gocolly/colly"
-    "bufio"
+    "log"
+    "os"
 )
-
-var fighters_page []string
-
 
 
 func get_fighters_links(c chan int, collector colly.Collector){
-    var wg sync.WaitGroup
-
-    for r := 'a'; r <'z'; r++ {
-        wg.Add(1)
-        go func() {
-            defer wg.Done()
-		    get_details_page_by_letter(string(r), c, collector)
-        }()
+    
+    for r := 'a'; r <'z'; r++ {        
+		get_details_page_by_letter(string(r), c, collector)       
 	}
 
 
-    wg.Wait()
 }
 
 func get_details_page_by_letter(letter string, c chan int, collector colly.Collector){
+    var wg sync.WaitGroup
+
     // Find and print all links
     collector.OnHTML("td.b-statistics__table-col", func(e *colly.HTMLElement) {
         links := e.ChildAttrs("a", "href")
-        name := e.ChildText("a")
-        fmt.Println(name)
+
         if(len(links)> 0){
-            fighters_page =  append(fighters_page, links[0])            
-        }else{
-          
+            val := string(links[0])
+            wg.Add(1)
+            go func() {
+                defer wg.Done()
+                 append_to_file(val)
+            }()
+            wg.Wait()
         }
     })
     collector.Visit("http://www.ufcstats.com/statistics/fighters?char="+letter)
 }
 
+func append_to_file(val string){
+    f, err := os.OpenFile("data.txt", os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0600)
+            if err != nil {
+                panic(err)
+            }
+            
+            defer f.Close()
+            
+            if _, err = f.WriteString(val + "\n"); err != nil {
+                panic(err)
+            }
+            if err != nil {
+                log.Fatal(err)
+            }
+}
+
 func main() {
+
+    f, err := os.Create("data.txt")
+
+    if err != nil {
+        log.Fatal(err)
+    }
+
+    defer f.Close()
+
     c := make(chan int, 1)
 
     collector := colly.NewCollector(
         colly.AllowedDomains("www.ufcstats.com"),
     )	
-    var wg sync.WaitGroup
-    wg.Add(1)
-    go func() {
-        defer wg.Done()
-        go get_fighters_links(c, *collector)
-    }()
-
-    wg.Wait()
-
-    fmt.Println("teste")
-    for _, v := range fighters_page {
-        fmt.Println(v)
-    }
-
-    var i string
-    fmt.Scan(&i)
+   
+    go get_fighters_links(c, *collector)
 
 }	
