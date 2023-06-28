@@ -3,7 +3,6 @@ package main
 import (
     "github.com/gocolly/colly"
     "os"
-   "fmt"
     "sync"
 )
 
@@ -15,7 +14,7 @@ var (
 
 func get_fighters_links( collector colly.Collector){
     
-    for r := 'a'; r <'z'; r++ {        
+    for r := 'a'; r <='z'; r++ {        
 		get_links_by_letter(string(r), collector)       
 	}
 }
@@ -43,9 +42,8 @@ func append_to_file(batchSize int){
     
     c <- 1
 
-    for i := 0; i < batchSize; i++ {
-        t := <- fighters_links
-        fmt.Println(i)
+    for i := 0; i < batchSize; i++ {        
+        t := <- fighters_links       
         f.WriteString(t + "\n");
     }
         
@@ -68,25 +66,24 @@ func main() {
    
     get_fighters_links(*collector)
 
-    threads := 8
+    threads := 17
     max := len(fighters_links)
-
-    //fmt.Println(max)
    
     batchSize := max/threads
     rest := max%threads
-    fmt.Println(rest)
+    batchSizeWithRest := batchSize+rest
 
     for i := 0; i < threads; i++ {
         wg.Add(1)
-        
-        if(i == threads-1){
-            batchSize = batchSize + rest
+
+        var aux =  batchSize
+        if(i== threads-1){
+            aux = batchSizeWithRest 
         }
 
         go func(){
             defer wg.Done()
-            append_to_file(batchSize)
+            append_to_file(aux)
         }()
     }
 
