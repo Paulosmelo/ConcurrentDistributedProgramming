@@ -26,10 +26,10 @@ func get_links_by_letter(letter string, collector colly.Collector){
         if(len(links)> 0){
             val := string(links[0])
             
-            append_to_file(val)
-        
+            append_to_file(val)  
         }
     })
+
     collector.Visit("http://www.ufcstats.com/statistics/fighters?char="+letter)
 }
 
@@ -51,6 +51,8 @@ func append_to_file(val string){
 
 func main() {
 
+    os.Remove("data.txt")
+
     f, err := os.Create("data.txt")
 
     if err != nil {
@@ -63,8 +65,6 @@ func main() {
         colly.AllowedDomains("www.ufcstats.com"),
     )	
    
+    for 
     get_fighters_links(*collector)
-
-    // var i string
-    // fmt.Scan(&i, "end")
 }	
