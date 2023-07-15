@@ -12,7 +12,7 @@ type DataReaderTCP struct{}
 func (DataReaderTCP) GetData(quantLinhas int) [][]string {
 	var linhas = make([][]string, quantLinhas)
 	fmt.Println()
-	f, err := os.Open("./datareader/data.csv")
+	f, err := os.Open("../TCP/datareader/data.csv")
 	if err != nil {
 		log.Fatal(err)
 	}
