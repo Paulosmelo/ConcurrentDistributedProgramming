@@ -67,7 +67,7 @@ func HandleUDPRequest(conn *net.UDPConn, msgFromClient []byte, n int, addr *net.
 	}
 
 	// process request
-	r := datareader.DataReaderTCP{}.GetData(request)
+	r := datareader.DataReader{}.GetData(request)
 
 	// serialise response
 	msgToClient, err = json.Marshal(r)

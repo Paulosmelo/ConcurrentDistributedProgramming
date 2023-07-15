@@ -67,7 +67,7 @@ func HandleTCPConnection(conn net.Conn) {
 			os.Exit(0)
 		}
 
-		r := datareader.DataReaderTCP{}.GetData(payloadAmount)
+		r := datareader.DataReader{}.GetData(payloadAmount)
 
 		fmt.Println(r)
 
