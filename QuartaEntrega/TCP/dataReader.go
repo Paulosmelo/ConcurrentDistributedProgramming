@@ -1,4 +1,4 @@
-package dataReaderTCP
+package main
 
 import (
 	"encoding/csv"
@@ -9,7 +9,7 @@ import (
 
 type DataReaderTCP struct{}
 
-func (DataReaderTCP) getData(quantLinhas int) [][]string {
+func (DataReaderTCP) GetData(quantLinhas int) [][]string {
 	var linhas = make([][]string, quantLinhas)
 	fmt.Println()
 	f, err := os.Open("data.csv")
@@ -34,9 +34,9 @@ func (DataReaderTCP) getData(quantLinhas int) [][]string {
 	return linhas[:]
 }
 
-// func main() {
-// 	linhas := getData(5)
+func main() {
+	linhas := DataReaderTCP{}.GetData(5)
 
-// 	fmt.Println(linhas)
+	fmt.Println(linhas)
 
-// }
+}
