@@ -9,10 +9,10 @@ import (
 
 func main() {
 
-	ClientUDP(10)
+	ClientUDP()
 }
 
-func ClientUDP(n int) {
+func ClientUDP() {
 	var response [][]string
 	// resolve server address
 	addr, err := net.ResolveUDPAddr("udp", "localhost:1313")
@@ -39,24 +39,22 @@ func ClientUDP(n int) {
 		}
 	}(conn)
 
-	for i := 0; i < n; i++ {
-		// Create request
-		request := 1
+	// Create request
+	request := 2
 
-		// Serialise and send request
-		err = encoder.Encode(request)
-		if err != nil {
-			fmt.Println(err)
-			os.Exit(0)
-		}
-
-		// Receive response from servidor
-		err = decoder.Decode(&response)
-		if err != nil {
-			fmt.Println(err)
-			os.Exit(0)
-		}
-
-		fmt.Println(response)
+	// Serialise and send request
+	err = encoder.Encode(request)
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(0)
 	}
+
+	// Receive response from servidor
+	err = decoder.Decode(&response)
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(0)
+	}
+
+	fmt.Println(response)
 }
