@@ -1,4 +1,4 @@
-package dataReaderTCP
+package main
 
 import (
 	"encoding/json"
@@ -6,6 +6,7 @@ import (
 	"net"
 	"os"
 	"strconv"
+	"tcp_module_lib/datareader"
 )
 
 func main() {
@@ -66,7 +67,9 @@ func HandleTCPConnection(conn net.Conn) {
 			os.Exit(0)
 		}
 
-		r := dataReaderTCP.DataReaderTCP{}.getData(payloadAmount)
+		r := datareader.DataReaderTCP{}.GetData(payloadAmount)
+
+		fmt.Println(r)
 
 		replyMsgBytes, err := json.Marshal(r)
 		if err != nil {
