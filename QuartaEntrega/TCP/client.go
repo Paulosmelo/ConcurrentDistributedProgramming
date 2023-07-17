@@ -7,8 +7,7 @@ import (
 	"os"
 	"strconv"
 	"time"
-	"log"
-	//"math/rand"
+	"log"	
 )
 
 func openLogFile(path string) (*os.File, error) {
@@ -49,30 +48,42 @@ func test_client_TCP() {
 		}
 	}(conn)
 
+
+	var response [][]string
+
+	// create coder/decoder
+	decoder := json.NewDecoder(conn)
+	encoder := json.NewEncoder(conn)
+
+	// Create request
+	request := 2
+
 	for i := 0; i < 10000; i++ {
 		// prepara request & start time
 		t1 := time.Now()
 
-		_, err = conn.Write([]byte(strconv.Itoa(2)))
+		// Serialise and send request
+		err = encoder.Encode(&request)
 		if err != nil {
 			fmt.Println(err)
 			os.Exit(0)
 		}
 
-		buffer := make([]byte, 1024)
-		mLen, err := conn.Read(buffer)
+		// Receive response from servidor
+		err = decoder.Decode(&response)
 		if err != nil {
 			fmt.Println(err)
 			os.Exit(0)
 		}
 
-		var feedback = make([][]string, 1)
-		json.Unmarshal(buffer[:mLen], &feedback)
-		fmt.Println(feedback)
 
 		requestTime = time.Now().Sub(t1)
+		var arg = ""
+		if(len(os.Args) > 1){
+			arg = os.Args[1]
+		}
 
-		log.Println(requestTime.Nanoseconds())
+		log.Println(arg + strconv.Itoa(int(requestTime.Nanoseconds())))
 	}
 }
 

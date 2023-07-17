@@ -5,13 +5,8 @@ import (
 	"fmt"
 	"net"
 	"os"
-	"strconv"
 	"tcp_module_lib/datareader"
 )
-
-func main() {
-	ServerTCP()
-}
 
 func ServerTCP() {
 	r, err := net.ResolveTCPAddr("tcp", "localhost:1313")
@@ -28,8 +23,6 @@ func ServerTCP() {
 
 	fmt.Println("Server listening on:", r)
 
-	defer ln.Close()
-
 	for {
 		conn, err := ln.Accept()
 		if err != nil {
@@ -41,6 +34,8 @@ func ServerTCP() {
 }
 
 func HandleTCPConnection(conn net.Conn) {
+	var msgFromClient  int
+
 	//Close connection
 	defer func(conn net.Conn) {
 		err := conn.Close()
@@ -50,34 +45,43 @@ func HandleTCPConnection(conn net.Conn) {
 		}
 	}(conn)
 
+	// Create coder/decoder
+	jsonDecoder := json.NewDecoder(conn)
+	jsonEncoder := json.NewEncoder(conn)
+
+
 	for{
-		buffer := make([]byte, 1024)
-		mLen, err := conn.Read(buffer)
-		if err != nil {
-			fmt.Println(err)
+	
+		err := jsonDecoder.Decode(&msgFromClient)
+		if err != nil && err.Error() == "EOF" {
+			//conn.Close()
+			// no further requests
+			break
 		}
 
-		payloadAmount, err := strconv.Atoi(string(buffer[:mLen]))
 		if err != nil {
 			fmt.Println(err)
-			os.Exit(0)
+			os.Exit(0) 
 		}
 
-		r := datareader.DataReader{}.GetData(payloadAmount)
+		// Process request
+		r := datareader.DataReader{}.GetData(msgFromClient)
 
-		fmt.Println(r)
+		// Create response
+		msgToClient := r
 
-		replyMsgBytes, err := json.Marshal(r)
+		// Serialise and send response to client
+		err = jsonEncoder.Encode(msgToClient)
 		if err != nil {
-			fmt.Println(err)
 			os.Exit(0)
-		}
-
-		_, err = conn.Write([]byte(replyMsgBytes))
-		if err != nil {
-			fmt.Println(err)
-			os.Exit(0)
+			break
 		}
 	}
 	// conn.Close()
+}
+
+func main() {
+	ServerTCP()
+
+	fmt.Scanln()
 }
