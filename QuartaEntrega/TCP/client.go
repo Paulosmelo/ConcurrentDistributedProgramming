@@ -18,7 +18,7 @@ func openLogFile(path string) (*os.File, error) {
     return logFile, nil
 }
 
-func test_client_TCP() {	
+func client_TCP() {	
 	file, err := openLogFile("../tests/logs/results_tcp.log")
     if err != nil {
         log.Fatal(err)
@@ -88,7 +88,7 @@ func test_client_TCP() {
 }
 
 func main() {
-	go test_client_TCP()
+	go client_TCP()
 
 	_, _ = fmt.Scanln()
 }
