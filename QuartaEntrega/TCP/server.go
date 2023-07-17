@@ -50,19 +50,15 @@ func HandleTCPConnection(conn net.Conn) {
 		}
 	}(conn)
 
-	for {
-
+	for{
 		buffer := make([]byte, 1024)
 		mLen, err := conn.Read(buffer)
 		if err != nil {
-			fmt.Println("1")
 			fmt.Println(err)
-			os.Exit(0)
 		}
 
 		payloadAmount, err := strconv.Atoi(string(buffer[:mLen]))
 		if err != nil {
-			fmt.Println("2")
 			fmt.Println(err)
 			os.Exit(0)
 		}
@@ -73,7 +69,6 @@ func HandleTCPConnection(conn net.Conn) {
 
 		replyMsgBytes, err := json.Marshal(r)
 		if err != nil {
-			fmt.Println("3")
 			fmt.Println(err)
 			os.Exit(0)
 		}

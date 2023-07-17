@@ -42,19 +42,21 @@ func ClientUDP() {
 	// Create request
 	request := 2
 
-	// Serialise and send request
-	err = encoder.Encode(request)
-	if err != nil {
-		fmt.Println(err)
-		os.Exit(0)
-	}
+	for i := 0; i < 10000; i++ {
+		// Serialise and send request
+		err = encoder.Encode(request)
+		if err != nil {
+			fmt.Println(err)
+			os.Exit(0)
+		}
 
-	// Receive response from servidor
-	err = decoder.Decode(&response)
-	if err != nil {
-		fmt.Println(err)
-		os.Exit(0)
-	}
+		// Receive response from servidor
+		err = decoder.Decode(&response)
+		if err != nil {
+			fmt.Println(err)
+			os.Exit(0)
+		}
 
-	fmt.Println(response)
+		fmt.Println(response)
+	}
 }
