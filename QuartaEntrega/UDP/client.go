@@ -59,9 +59,9 @@ func ClientUDP() {
 	}(conn)
 
 	// Create request
-	request := 2
+	request := 295
 
-	for i := 0; i < 10000; i++ {
+	for i := 0; i < 1; i++ {
 		
 		// prepara request & start time
 		t1 := time.Now()

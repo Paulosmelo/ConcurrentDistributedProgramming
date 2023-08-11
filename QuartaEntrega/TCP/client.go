@@ -18,13 +18,23 @@ func openLogFile(path string) (*os.File, error) {
     return logFile, nil
 }
 
-func client_TCP() {	
-	file, err := openLogFile("../tests/logs/results_tcp.log")
-    if err != nil {
-        log.Fatal(err)
-    }
+func setUpLog(){
+	var test_n = ""
+
+	if(len(os.Args) > 2){
+		test_n = os.Args[2]
+	}
+
+	file, err := openLogFile("../tests/tcp_logs/results_rpc_"+test_n+".log")
+
+    if err != nil { log.Fatal(err)}
 	log.SetOutput(file)
-    log.SetFlags(log.LstdFlags | log.Lshortfile | log.Lmicroseconds)
+    log.SetFlags(0)
+}
+
+func client_TCP() {	
+	
+	setUpLog()
 
 	var requestTime time.Duration
 
@@ -56,9 +66,9 @@ func client_TCP() {
 	encoder := json.NewEncoder(conn)
 
 	// Create request
-	request := 2
+	request := 100000
 
-	for i := 0; i < 10000; i++ {
+	for i := 0; i < 1; i++ {
 		// prepara request & start time
 		t1 := time.Now()
 
