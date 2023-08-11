@@ -17,13 +17,22 @@ func openLogFile(path string) (*os.File, error) {
     return logFile, nil
 }
 
-func client_TCP() {	
-	file, err := openLogFile("../tests/logs/results_rpc.log")
-    if err != nil {
-        log.Fatal(err)
-    }
+func setUpLog(){
+	var test_n = ""
+
+	if(len(os.Args) > 2){
+		test_n = os.Args[2]
+	}
+
+	file, err := openLogFile("../tests/rpc_logs/results_rpc_"+test_n+".log")
+
+    if err != nil { log.Fatal(err)}
 	log.SetOutput(file)
-    log.SetFlags(log.LstdFlags | log.Lshortfile | log.Lmicroseconds)
+    log.SetFlags(0)
+}
+
+func client_RPC() {		
+	setUpLog()
 
 	var requestTime time.Duration
 
@@ -54,15 +63,13 @@ func client_TCP() {
 		requestTime = time.Now().Sub(t1)
 
 		if(len(os.Args) > 1 && os.Args[1] == "teste"){
-			log.Println(os.Args[1]+ strconv.Itoa(int(requestTime.Nanoseconds())))
-		}else{
 			log.Println(strconv.Itoa(int(requestTime.Nanoseconds())))
 		}
 	}
 }
 
 func main() {
-	go client_TCP()
+	go client_RPC()
 
 	_, _ = fmt.Scanln()
 }
