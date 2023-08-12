@@ -49,16 +49,16 @@ func client_RPC() {
 	var reply [][]string
 
 	// Create request
-	request := 10000
+	request := 2
 
-	for i := 0; i < request; i++ {
+	for i := 0; i < 10000; i++ {
 		// prepara request & start time
 		t1 := time.Now()
 
 		//fmt.Println(reply)
 
 		// invoca operação remota
-		client.Call("DataReader.GetDataRPC", 2, &reply)
+		client.Call("DataReader.GetDataRPC", request, &reply)
 				
 		requestTime = time.Now().Sub(t1)
 

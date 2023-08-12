@@ -22,13 +22,23 @@ func openLogFile(path string) (*os.File, error) {
     return logFile, nil
 }
 
-func ClientUDP() {
-	file, err := openLogFile("../tests/logs/results_udp.log")
-    if err != nil {
-        log.Fatal(err)
-    }
+func setUpLog(){
+	var test_n = ""
+
+	if(len(os.Args) > 2){
+		test_n = os.Args[2]
+	}
+
+	file, err := openLogFile("../tests/udp_logs/results_udp_"+test_n+".log")
+
+    if err != nil { log.Fatal(err)}
 	log.SetOutput(file)
-    log.SetFlags(log.LstdFlags | log.Lshortfile | log.Lmicroseconds)
+    log.SetFlags(0)
+}
+
+
+func ClientUDP() {
+	setUpLog()
 
 	var requestTime time.Duration
 
@@ -59,9 +69,9 @@ func ClientUDP() {
 	}(conn)
 
 	// Create request
-	request := 295
+	request := 2
 
-	for i := 0; i < 1; i++ {
+	for i := 0; i < 10000; i++ {
 		
 		// prepara request & start time
 		t1 := time.Now()
@@ -80,11 +90,8 @@ func ClientUDP() {
 		}
 
 		requestTime = time.Now().Sub(t1)
-		var arg = ""
-		if(len(os.Args) > 1){
-			arg = os.Args[1]
+		if(len(os.Args) > 1 && os.Args[1] == "teste"){
+			log.Println(strconv.Itoa(int(requestTime.Nanoseconds())))
 		}
-
-		log.Println(arg + strconv.Itoa(int(requestTime.Nanoseconds())))
 	}
 }
